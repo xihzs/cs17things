@@ -1,0 +1,47 @@
+ColorOS 17 (17.0 Ported By Gwen) - Xiaomi POCO X6 5G / Redmi Note 13 Pro 5G (garnet) Changelog
+================================================================================================
+
+1. Core Bringup, Partitions, Vendor & SELinux Enforcing
+- Mounted ColorOS my_* dynamic partitions via second-stage fstab + garnet_port_mount.rc and stripped fstab encryption
+- Patched vendor fstab.qcom to mount my_product/product_overlay/framework and etc/permissions as lowerdir overlays
+- Shipped libandroidicu.so in vendor/lib64 for vendor binary compatibility
+- Configured pure 64-bit userspace props (ro.zygote=zygote64, arm64-v8a) and disabled legacy 32-bit vendor services in rc files
+- Configured citsensorservice as class hal and disabled missing ssgqmigd in init.qcom.rc
+- Removed android.hardware.consumerir.xml, android.hardware.cas@1.2-service.xml, media.omx, and dolby entries from VINTF manifests
+- Patched vendor.xiaomi.hardware.vibratorfeature.service and VINTF manifest (IVibrator/default) for haptics
+- Patched framework.jar (Flags.nativeAppZygote=false + AppComponentFactory NativeOnly alias)
+- Applied full SELinux Enforcing CIL policy supplement (217 types, AIDL/HIDL/property contexts) in system_ext and added /dev/block/sda2 to vendor_file_contexts
+
+2. Display, UI, Brightness, Input, FOD & Performance
+- Fixed instant power button response (lib_inputflingerEx.so)
+- Eliminated OplusPerformanceController::initHal boot/audio stall (libaudioclientextimpl.so, oplus_performance_shared.so)
+- Added garnet FODService hooks (services.jar), garnet_fod_bridge, focaltech_touch.ko, and oplus.software.fingeprint_optical_enabled in oplus.product.display_features.xml
+- Fixed minimum display brightness and low-brightness LUT curves (display_brightness_config_default.xml, df_default.xml, ManualminBl, MiBlLut0 clamp)
+- Set punch-hole cutout coordinates (ro.oplus.display.screenhole.positon=578,29,642,93) and display corner radius
+- Disabled fold, dual-display, taskbar, and large-screen feature flags across my_product XMLs & build.prop
+- Removed LauncherResourceOverlay (disabled foldscreen launcher overlay) and set static default wallpaper (phone_color_default_theme_maps.xml)
+- Synced 120Hz refresh rate, framepacing, and OpenGL HWUI / SurfaceFlinger properties across vendor/system/product
+- Reduced bootanimation delay by disabling the 60s OTA hold/merge gate (persist.sys.ota.bootanim_hold_ms=0, ro.sys.ota.bootanim_merge_gate=false, ro.sys.oplus_bootanimation_ota_optimize=false)
+
+3. Audio, Charging, Connectivity, Debloat & System
+- Fixed battery charging and charging indicator (libupdateprof.qti.so, oplus-services.jar)
+- Stripped Multiroute from sku_parrot_qssi audio policy and populated ringtones/notifications in product/media/audio
+- Enabled 5G/NR mode preference (persist.vendor.radio.5g_mode_pref=1), disabled unsupported LE-Audio BT profiles, and silenced IMS/QXDM/camera debug log spam
+- Debloated unused OPPO/Google preload packages across my_product, my_stock, my_region, and product (AIPaint, AONService, AICallAssistant, AICore, AIWriter, AISeal, MCS, ChildrenSpace, KeKePay, Pictorial, SoftsimRedteaRoaming, ContentPortal, Shelper, StdSP, Facebook stubs, Google bloat)
+
+4. Camera (OplusCamera as Default)
+- Made OplusCamera (com.oplus.camera) the default system camera in my_product/app/OplusCamera and system/vendor/product/system_ext props
+- Removed MiuiCamera and OpenCamera from the ROM
+- Added OcrScanner.apk (com.coloros.ocrscanner) in my_stock/app/OcrScanner to fix Scan Documents (OSEE)
+- Fixed sendextcamcmd stall and sendOplusExtCamCmd crash (libcsextimpl.so)
+- Added missing lib_rectify.so and libmsnativefilter.so in odm/lib64 (fixes OCamDCShot::oplusRectifyRegister SIGSEGV)
+- Patched com.oplus.camera.unit.sdk.jar:
+  * Allowed Video Ultra Steady (ConfigFeatureImpl.isFeatureConflictLegal)
+  * Guarded OplusSuperEISPreview.destroy() against null mNativePtr SIGSEGV in APSSuperEISNode::doUninit()
+  * Snapped reader HAL surface sizes to supported sizes (SurfaceDecision.snapHalSize) to fix Aspect Ratio (16:9, Widescreen, Full, 1:1, 4:3) freezes
+  * Normalized APSClient capture decision format/featureType (fixes Photo & HI-RES freezes) and mapped Portrait capture_mode to common at capture time (fixes Portrait shutter freeze & APS endCapture SIGABRT)
+- Updated odm camera configs (oplus_camera_config, oplus_camera_algo_switch_config, SimTool_Master.ini):
+  * Fixed Video recording immediate stop (disabled ozoaudio sound focus, video livephoto, and unsupported 4K60/4K120/1080p120 profiles)
+  * Disabled unsupported Dual-View Video, Soft Light, turbo RAW, 200MP merge/RAW10, Master RAW/JPG MAX/RAW MAX
+  * Disabled aps_algo_colorsensor (missing libocce3a.so SIGSEGV) and missing Portrait algos
+  * Fixed Master mode preview quality by removing professional from preview/capture HDR and disabling aggressive LUT/vignette/ODT stages in SimTool_Master.ini

@@ -1,0 +1,187 @@
+{
+  "algoTraversalRely": {
+    "rely": [
+      {
+        "relyId": 1,
+        "condition": {
+          "eq": [
+            "currentPipeline",
+            0
+          ]
+        },
+        "relyResult": {
+          "lt": [
+            "zoomRatio",
+            1.0
+          ]
+        }
+      },
+      {
+        "relyId": 1,
+        "condition": {
+          "eq": [
+            "currentPipeline",
+            1
+          ]
+        },
+        "relyResult": {
+          "lt": [
+            "zoomRatio",
+            3.0
+          ]
+        }
+      },
+      {
+        "relyId": 1,
+        "condition": {
+          "eq": [
+            "currentPipeline",
+            2
+          ]
+        },
+        "relyResult": {
+          "lt": [
+            "zoomRatio",
+            10.0
+          ]
+        }
+      },
+      {
+        "relyId": 1,
+        "condition": {
+          "eq": [
+            "currentPipeline",
+            3
+          ]
+        },
+        "relyResult": {
+          "egt": [
+            "zoomRatio",
+            10.0
+          ]
+        }
+      }
+    ],
+    "conditionalFilter": [
+      {
+        "condition": {
+          "or": {
+            "eq": [
+              "isFromExtension",
+              true
+            ],
+            "not_eq": [
+              "isFromExtension",
+              false
+            ]
+          }
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "eq": [
+              "notNeedTest",
+              true
+            ]
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "eq": [
+              "NeedTest",
+              false
+            ]
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "eq": [
+              "captureMode",
+              "APS_CAPMODE_REAR_NIGHT"
+            ]
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "eq": [
+              "aiSceneValue",
+              29
+            ]
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "eq": [
+              "paramsHolder->current_burst_capture_type",
+              2
+            ]
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "eq": [
+              "captureMode",
+              "APS_CAPMODE_SUPER_TEXT"
+            ]
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "and": {
+            "eq": [
+              "captureMode",
+              "APS_CAPMODE_AI_HIGH_PIXEL"
+            ],
+            "eq": [
+              "isHighPixel50MScene",
+              true
+            ],
+            "eq": [
+              "isTouchActive",
+              false
+            ]
+          }
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "gt": [
+              "paramsHolder->exposure_time_from_app->-1->int64",
+              66666666
+            ]
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "eq": [
+              "paramsHolder->under_water_status",
+              true
+            ]
+        },
+        "filterResult": false
+      },
+      {
+        "condition": {
+          "eq": [
+              "isPortrait10xFallback",
+              false
+            ]
+        },
+        "filterResult": false
+      }
+    ]
+  },
+  "fallBackThreshold": {
+    "wide": 1.0,
+    "tele": 3.0
+  }
+}
